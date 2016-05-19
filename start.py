@@ -3,7 +3,7 @@ from config import *
 
 d(
     ALLOWED_HOSTS=['*'],
-    DEBUG=True,
+    DEBUG=DEBUG,
     INSTALLED_APPS=["app"],
     MIDDLEWARE_CLASSES=['app.views.UrlsMiddleware'],
     DATABASES={

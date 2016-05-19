@@ -3,3 +3,4 @@ secret.txt
 .env
 *.pyc
 *.py~
+config.py
