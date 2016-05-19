@@ -23,9 +23,9 @@ def get_result(request):
             r = Requests.objects.filter(id=id).first()
             if r:
                 if not r.processed:
-                    return json_resp({'code': 2, 'error': 'Error: not processed yet'})
-                return json_resp({'code': 0, 'result': r.result})
-            return json_resp({'code': 1, 'error': 'Error: ID not Found'})
+                    return {'code': 2, 'error': 'Error: not processed yet'}
+                return {'code': 0, 'result': r.result}
+            return {'code': 1, 'error': 'Error: ID not Found'}
         return
     except:
         return

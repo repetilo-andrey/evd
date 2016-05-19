@@ -1,3 +1,5 @@
 secret.txt
 .idea
 .env
+*.pyc
+*.py~
