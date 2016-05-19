@@ -1,4 +1,3 @@
-import json
 from importd import d
 from .models import Requests
 
@@ -31,5 +30,10 @@ def get_result(request):
         return
 
 
-def json_resp(resp):
-    return json.dumps(resp)
+class UrlsMiddleware(object):
+    def process_request(self, request):
+        if 'admin/' in request.path:
+            response = d.HttpResponse()
+            response.status_code = 404
+            return response
+        return None
