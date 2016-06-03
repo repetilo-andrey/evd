@@ -23,7 +23,7 @@ def get_result(request):
             if r:
                 if not r.processed:
                     return {'code': 2, 'error': 'Error: not processed yet'}
-                return {'code': 0, 'result': r.result}
+                return {'code': 0, 'result': r.result, 'url': r.url}
             return {'code': 1, 'error': 'Error: ID not Found'}
         return
     except:

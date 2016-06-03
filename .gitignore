@@ -4,3 +4,6 @@ secret.txt
 *.pyc
 *.py~
 config.py
+OCR/
+gunicorn.pid
+supervisor.pid
