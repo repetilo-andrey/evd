@@ -5,29 +5,39 @@ from .models import Requests
 @d("/AddURLToQueue/")
 def add_url_to_queue(request):
     try:
-        url = request.GET.get('url')
-        if url:
-            r = Requests.objects.create(url=url)
-            return int(r.id)
-        return
-    except:
-        return
+        batch_id = request.GET.get('batchID')
+        urls = request.GET.getlist('urls')
+        if len(urls) == 0:
+            urls = request.GET.getlist('urls[]')
+        if batch_id:
+            for url in urls:
+                Requests.objects.create(url=url, batch_id=batch_id)
+            return {'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)}
+        return {'code': 1, 'error': 'Error: no batchID'}
+    except Exception, e:
+        return {'code': 1, 'error': str(e)}
 
 
 @d("/GetResult/")
 def get_result(request):
     try:
-        id = request.GET.get('id')
-        if id:
-            r = Requests.objects.filter(id=id).first()
-            if r:
+        batch_id = request.GET.get('batchID')
+        if batch_id:
+            requests = Requests.objects.filter(batch_id=batch_id)
+            resp = {'batchID': batch_id, 'results': []}
+            for r in requests:
+                d = {'url': r.url}
                 if not r.processed:
-                    return {'code': 2, 'error': 'Error: not processed yet'}
-                return {'code': 0, 'result': r.result, 'url': r.url}
-            return {'code': 1, 'error': 'Error: ID not Found'}
-        return
-    except:
-        return
+                    d['code'] = 2
+                    d['error'] = 'Error: not processed yet'
+                else:
+                    d['code'] = 0
+                    d['result'] = r.result
+                resp['results'].append(d)
+            return resp
+        return {'code': 1, 'error': 'Error: no batchID'}
+    except Exception, e:
+        return {'code': 1, 'error': str(e)}
 
 
 class UrlsMiddleware(object):
