@@ -1,9 +1,12 @@
-from importd import d
+import json
+from django.http import HttpResponse
 from .models import Requests
-from django.http import JsonResponse
 
 
-@d("/AddURLToQueue/")
+def json_response(context):
+    return HttpResponse(json.dumps(context, indent=4), content_type='application/json')
+
+
 def add_url_to_queue(request):
     try:
         batch_id = request.GET.get('batchID')
@@ -13,13 +16,12 @@ def add_url_to_queue(request):
         if batch_id:
             for url in urls:
                 Requests.objects.create(url=url, batch_id=batch_id)
-            return JsonResponse({'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)})
-        return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
+            return json_response({'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)})
+        return json_response({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
-        return JsonResponse({'code': 1, 'error': str(e)})
+        return json_response({'code': 1, 'error': str(e)})
 
 
-@d("/GetResult/")
 def get_result(request):
     try:
         batch_id = request.GET.get('batchID')
@@ -35,16 +37,7 @@ def get_result(request):
                     d['code'] = 0
                     d['result'] = r.result
                 resp['results'].append(d)
-            return JsonResponse(resp)
-        return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
+            return json_response(resp)
+        return json_response({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
-        return JsonResponse({'code': 1, 'error': str(e)})
-
-
-class UrlsMiddleware(object):
-    def process_request(self, request):
-        if 'admin/' in request.path:
-            response = d.HttpResponse()
-            response.status_code = 404
-            return response
-        return None
+        return json_response({'code': 1, 'error': str(e)})
