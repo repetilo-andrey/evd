@@ -1,5 +1,6 @@
 from importd import d
 from .models import Requests
+from django.http import JsonResponse
 
 
 @d("/AddURLToQueue/")
@@ -12,10 +13,10 @@ def add_url_to_queue(request):
         if batch_id:
             for url in urls:
                 Requests.objects.create(url=url, batch_id=batch_id)
-            return {'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)}
-        return {'code': 1, 'error': 'Error: no batchID'}
+            return JsonResponse({'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)})
+        return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
-        return {'code': 1, 'error': str(e)}
+        JsonResponse({'code': 1, 'error': str(e)})
 
 
 @d("/GetResult/")
@@ -35,9 +36,9 @@ def get_result(request):
                     d['result'] = r.result
                 resp['results'].append(d)
             return resp
-        return {'code': 1, 'error': 'Error: no batchID'}
+        return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
-        return {'code': 1, 'error': str(e)}
+        return JsonResponse({'code': 1, 'error': str(e)})
 
 
 class UrlsMiddleware(object):
