@@ -16,7 +16,7 @@ def add_url_to_queue(request):
             return JsonResponse({'code': 0, 'result': 'Created requests for urls: %s' % ', '.join(urls)})
         return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
-        JsonResponse({'code': 1, 'error': str(e)})
+        return JsonResponse({'code': 1, 'error': str(e)})
 
 
 @d("/GetResult/")
@@ -35,7 +35,7 @@ def get_result(request):
                     d['code'] = 0
                     d['result'] = r.result
                 resp['results'].append(d)
-            return resp
+            return JsonResponse(resp)
         return JsonResponse({'code': 1, 'error': 'Error: no batchID'})
     except Exception, e:
         return JsonResponse({'code': 1, 'error': str(e)})
